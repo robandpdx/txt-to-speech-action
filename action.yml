@@ -37,6 +37,7 @@ runs:
         ENDPOINT_URL: ${{ inputs.endpoint_url }}
         HOST_VOICE: ${{ inputs.host_voice }}
         GUEST_VOICE: ${{ inputs.guest_voice }}
+        PYTHONPATH: ${{ github.action_path }}
       run: |
         import os
         from pathlib import Path

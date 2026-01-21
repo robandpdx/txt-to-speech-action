@@ -2,6 +2,8 @@
 
 Composite GitHub Action that turns batches of plain-text podcast scripts into Azure AI Speech audio. The action installs the Azure Speech SDK, loads the project-specific `speech_library`, and generates host and guest tracks for every `.txt` file beneath each speaker directory.
 
+> The repository already vendors a minimal `speech_library` package so the action can import it without extra setup. Replace the stub implementation in [speech_library/library.py](speech_library/library.py) with your actual synthesis code and ensure your scripts live under [scripts/](scripts).
+
 ## How It Works
 - Sets up Python 3.11 inside the workflow runner.
 - Installs `azure-cognitiveservices-speech` (>= 1.36.0).
