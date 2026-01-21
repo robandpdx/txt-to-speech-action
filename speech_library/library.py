@@ -7,7 +7,16 @@ from pathlib import Path
 
 import azure.cognitiveservices.speech as speechsdk
 
-SCRIPTS_ROOT = Path("scripts")
+
+def _resolve_scripts_root() -> Path:
+    override = os.environ.get("TEXT_DIRECTORY") or os.environ.get("SCRIPTS_ROOT")
+    base = Path(override) if override else Path("scripts")
+    if not base.is_absolute():
+        base = Path.cwd() / base
+    return base.resolve()
+
+
+SCRIPTS_ROOT = _resolve_scripts_root()
 AUDIO_ROOT = Path("audio")
 
 speech_key = os.environ.get("SPEECH_KEY")
