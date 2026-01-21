@@ -7,14 +7,13 @@ inputs:
   endpoint_url:
     description: Azure Speech endpoint URL.
     required: true
-  host_voice:
-    description: Host voice name for synthesis.
+  voice:
+    description: Voice name for synthesis.
     default: "en-US-Ava:DragonHDLatestNeural"
     required: false
-  guest_voice:
-    description: Guest voice name for synthesis.
-    default: "en-US-Andrew:DragonHDLatestNeural"
-    required: false
+  text_directory:
+    description: Relative or absolute path to the directory containing .txt files to synthesize.
+    required: true
 runs:
   using: "composite"
   steps:
@@ -35,14 +34,14 @@ runs:
       env:
         SPEECH_KEY: ${{ inputs.speech_key }}
         ENDPOINT_URL: ${{ inputs.endpoint_url }}
-        HOST_VOICE: ${{ inputs.host_voice }}
-        GUEST_VOICE: ${{ inputs.guest_voice }}
+        VOICE: ${{ inputs.voice }}
+        TEXT_DIRECTORY: ${{ inputs.text_directory }}
         PYTHONPATH: ${{ github.action_path }}
       run: |
         import os
         from pathlib import Path
 
-        from speech_library import SCRIPTS_ROOT, synthesize_text_file
+        from speech_library import synthesize_text_file
 
 
         def _require_env(var_name: str) -> str:
@@ -59,11 +58,20 @@ runs:
                 output_path = synthesize_text_file(text_file, voice)
                 print(f"Speech synthesized to [{output_path}] for text file [{text_file}]")
 
+        def _resolve_text_directory() -> Path:
+          raw_dir = _require_env("TEXT_DIRECTORY")
+          directory = Path(raw_dir)
+          if not directory.is_absolute():
+            directory = Path.cwd() / directory
+          directory = directory.resolve()
+          if not directory.exists():
+            raise FileNotFoundError(f"Text directory not found: {directory}")
+          return directory
 
-        host_voice = _require_env("HOST_VOICE")
-        guest_voice = _require_env("GUEST_VOICE")
+
+        voice = _require_env("VOICE")
         _require_env("SPEECH_KEY")
         _require_env("ENDPOINT_URL")
+        text_directory = _resolve_text_directory()
 
-        _process_directory(SCRIPTS_ROOT / "host", host_voice)
-        _process_directory(SCRIPTS_ROOT / "guest", guest_voice)
+        _process_directory(text_directory, voice)
