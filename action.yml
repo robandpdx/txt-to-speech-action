@@ -14,6 +14,10 @@ inputs:
   text_directory:
     description: Relative or absolute path to the directory containing .txt files to synthesize.
     required: true
+  artifact_name:
+    description: Name for the uploaded audio artifact.
+    default: "synthesized-audio"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -75,3 +79,11 @@ runs:
         text_directory = _resolve_text_directory()
 
         _process_directory(text_directory, voice)
+
+    - name: Upload synthesized audio
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: audio
+        if-no-files-found: warn

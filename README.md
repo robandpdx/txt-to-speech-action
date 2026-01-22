@@ -20,6 +20,7 @@ Your repository must provide the `speech_library` package plus a directory (for 
 | `endpoint_url` | ✅ | — | Full Azure Speech endpoint URL, e.g. `https://<region>.tts.speech.microsoft.com/cognitiveservices/v1`. |
 | `voice` | ❌ | `en-US-Ava:DragonHDLatestNeural` | Voice used for every synthesized script in the run. |
 | `text_directory` | ✅ | — | Relative or absolute path to the folder containing `.txt` files (subdirectories allowed). |
+| `artifact_name` | ❌ | `synthesized-audio` | Name used for the uploaded artifact that captures all generated audio files. |
 
 > **Note**: Voice names must exist in the Azure Speech region tied to your endpoint.
 
